@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h> //for RAND_MAX
+#include <time.h> //to access the time so that new seed can be generated on each programme execution for the random position generation
+
+//this function determines the duplicate element and then prints it to screen
+void print_duplicate_value(int arr[], long n)
+{
+    //declare and initialise variable to store the sum of all elements in the user inputted array
+    long sum = 0;
+    
+    //sum up all of the integers in the array that contains duplicate element
+    for (int i = 0; i < n + 1; i++)
+    {
+        sum = sum + arr[i];
+    }
+    
+    //calculate the value of the duplicate value by exploiting the fact that the sum of all integers from 1 to n (with no duplicates) is n*(n+1)/2
+    long dup = sum - (n*(n+1)/2);
+    
+    if (dup > 0)
+    {
+        printf("The duplicate value in the array is %ld \n", dup);
+    }
+    else
+    {
+        printf("No duplicate value exists \n");
+    }
+}
+
+//this function generates a random value between 1 and 1,000,000 which will be used as the duplicate position
+int value(int n)
+{
+  // calculate the remainder of the range of the random numbers that can be generated, and the size of the interval, n, that we want the random number to be in.
+  // this method removes random number bias towards a section of the lower numbers in the range
+  int remainder = RAND_MAX % n;
+  
+  int x, rn;
+  
+  //get a seed based on the current time for the random number generator
+  srand(time(NULL));
+  
+  do
+  {
+      x = rand(); //get a random number between 0 and RAND_MAX-1
+  }
+  while (x >= RAND_MAX - remainder);
+  
+  rn = 1 + (x % n); //add one to 'x % n' as the we cannot return the value 0 to main because the array only contains integers from 1 to 1,000,000
+  
+  //PRINT THE RANDOM VALUE TO THE SCREEN SO WE CAN VERIFY WHETHER THE PROGRAMME WORKS!
+  printf("Random position is %d \n", rn);
+  
+  return rn;
+}
+
+
+int main()
+{
+    
+int n = 1000000; //max integer value and equal to the number of elements that should be in the array with no duplicate element
+int i;
+
+    //define array large enough to take one duplicate value
+   int array[n+1];
+   
+   //call the function value to get a random duplicate value
+   int v = value(n);
+   
+   //populate the array with the duplicate value
+   for (i = 0; i < v; i++)
+   {
+       array[i] = i + 1;
+   }
+   
+   array[v] = v;
+   
+   for (i = v + 1; i < n + 1; i++)
+   {
+       array[i] = i;
+   }
+   
+   //call the function 'print_duplicate_value' to determine which value is repeated twice in 'array'
+   print_duplicate_value(array, n);
+   
+   return 0;
+}
